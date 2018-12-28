@@ -1,0 +1,8 @@
+.idea
+*.log
+.scrapy/
+
+/sinanews_proj/celery_app/celeryconfig.py
+/sinanews_proj/util/ossUtil.py
+/sinanews_proj/settings.py
+/.idea/
