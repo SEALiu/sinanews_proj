@@ -59,3 +59,6 @@ CELERYBEAT_SCHEDULE = {
     # ...
 }
 ```
+
+### you may need ...
+ - [github.com/jhao104/proxy_pool: Python爬虫代理IP池](https://github.com/jhao104/proxy_pool)
