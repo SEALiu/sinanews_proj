@@ -22,7 +22,7 @@ class SinaNewsSpider(MyRefererSpider):
 
     def parse(self, response):
         logging.debug('response url:{}'.format(response.url))
-        print("response url:{}".format(response.url))
+        # print("response url:{}".format(response.url))
 
         if JsonUtil.is_json(response.text):
             logging.debug('response[{}]\'s format is json'.format(response.url))
@@ -44,7 +44,7 @@ class SinaNewsSpider(MyRefererSpider):
                 # 就把 https://edu.sina.cn  页面顶部的导航链接加入 redis（sina_news_spider:start_urls） 中
                 for url in top_nav_urls:
                     RedisUtil.set_add(self.redis_conn, self.redis_key, url)
-                    print("home-navUrl:{}".format(url))
+                    # print("home-navUrl:{}".format(url))
 
                 # 构造页面的异步请求url，并添加至 redis（sina_news_spider:start_urls）中
                 # 首页的异步请求不是分页请求的，每次请求都是不同的数据，即：首页是实现了无限滚动，可能包含重复内容
@@ -60,7 +60,7 @@ class SinaNewsSpider(MyRefererSpider):
                     '''
                     api_url = 'https:' + matches.group(1) + '&ad={channel:' + matches.group(2) + '}&action=1'
                     RedisUtil.set_add(self.redis_conn, self.redis_key, api_url)
-                    print("home-infiniteApi:{}".format(api_url))
+                    # print("home-infiniteApi:{}".format(api_url))
                 else:
                     logging.error('can not find {} in html[{}]'.format(regex, response.url))
 
@@ -88,8 +88,6 @@ class SinaNewsSpider(MyRefererSpider):
                     request = Request(comment_api_url, callback=self.parse, headers={'referer': response.url})
                     # print('comment request====================>: {}'.format(request.headers))
                     yield request
-                # else:
-                # print('comment api not found========================>')
 
             else:
                 # 当前爬取的是新浪新闻的教育分类页面
@@ -124,7 +122,7 @@ class SinaNewsSpider(MyRefererSpider):
                             '''
                             api_url = 'https:' + matches.group(1) + '&col=' + matches_col.group(1) + '&page=1'
                             RedisUtil.set_add(self.redis_conn, self.redis_key, api_url)
-                            print("subtype-apiUrl:{}".format(api_url))
+                            # print("subtype-apiUrl:{}".format(api_url))
                 else:
                     # MBA 和移民栏目的子分类 id 获取方式不同
                     sub_type_ids_another = response.xpath(
@@ -154,7 +152,7 @@ class SinaNewsSpider(MyRefererSpider):
                             for cat in sub_type_ids_another:
                                 api_url = json_data['load_api'] + '&cat=' + cat + '&page=1'
                                 RedisUtil.set_add(self.redis_conn, self.redis_key, api_url)
-                                print("subtype-apiUrl(移民/MBA):{}".format(api_url))
+                                # print("subtype-apiUrl(移民/MBA):{}".format(api_url))
 
     def json_parse(self, response=None, json_data=None):
         # parse json-data
@@ -165,11 +163,11 @@ class SinaNewsSpider(MyRefererSpider):
             value['request_url'] = response.url
         else:
             logging.error('json_parse() 需要至少一个参数：response  jsondata')
-            print('json_parse() 需要至少一个参数：response  jsondata')
+            # print('json_parse() 需要至少一个参数：response  jsondata')
             return
 
         # 由于该函数需要处理多种异步请求方式返回的 json 数据，所以需要根据 value['request_url'] 进行判断：
-        print('request_url:{}'.format(value['request_url']))
+        # print('request_url:{}'.format(value['request_url']))
 
         # 首页
         regex_1 = r'https?://cre.dp.sina.cn/api[\w.?=&%-/:]*'
@@ -189,10 +187,7 @@ class SinaNewsSpider(MyRefererSpider):
             # 首页
             # 首页的 ajax-URL 不需要修改参数，每次请求都是不同的数据
             logging.debug('首页 ajax-URL:{}'.format(value['request_url']))
-            print('首页 ajax-URL:{}'.format(value['request_url']))
-            print("===============================================================")
             RedisUtil.set_add(self.redis_conn, self.redis_key, value['request_url'])
-            print("===============================================================")
 
             # 解析 json
             # json 格式参考：../scrapy_proj/helper_doc/ajax_response_sample/sina.home.json
@@ -209,7 +204,7 @@ class SinaNewsSpider(MyRefererSpider):
             if len(value['result']['data']['list']) != 0:
                 api_url = re.sub(r'page=(\d+)', lambda m: 'page={}'.format(int(m.group(1)) + 1), value['request_url'])
                 RedisUtil.set_add(self.redis_conn, self.redis_key, api_url)
-                print("subtype-apiUrl-nextPage:{}".format(api_url))
+                # print("subtype-apiUrl-nextPage:{}".format(api_url))
 
                 # 解析 json
                 for item in value['result']['data']['list']:
@@ -223,7 +218,7 @@ class SinaNewsSpider(MyRefererSpider):
             if len(value['data']) == 0:
                 api_url = re.sub(r'page=(\d+)', lambda m: 'page={}'.format(int(m.group(1)) + 1), value['request_url'])
                 RedisUtil.set_add(self.redis_conn, self.redis_key, api_url)
-                print("subtype-apiUrl(移民/MBA)-nextPage:{}".format(api_url))
+                # print("subtype-apiUrl(移民/MBA)-nextPage:{}".format(api_url))
 
                 # 解析 json
                 for data in value['data']:
@@ -239,7 +234,7 @@ class SinaNewsSpider(MyRefererSpider):
             if len(value['result']['cmntlist']) != 0:
                 api_url = re.sub(r'page=(\d+)', lambda m: 'page={}'.format(int(m.group(1)) + 1), value['request_url'])
                 RedisUtil.set_add(self.redis_conn, self.redis_key, api_url)
-                print("comment-apiUrl-nextPage:{}".format(api_url))
+                # print("comment-apiUrl-nextPage:{}".format(api_url))
                 # print("评论页面的下一页url：================================>{}".format(apiUrl))
 
             # 解析 json
@@ -258,7 +253,7 @@ class SinaNewsSpider(MyRefererSpider):
         if match:
             comment_api = str.replace(match.group(1), '\\', '')
             RedisUtil.set_add(self.redis_conn, self.redis_key, comment_api)
-            print("comment-apiUrl:{}".format(comment_api))
+            # print("comment-apiUrl:{}".format(comment_api))
 
         # 将微博账户页面添加至 redis 待爬取队列
         author_id = response.xpath("//figure[@class='weibo_info look_info']/attribute::data-uid").extract()

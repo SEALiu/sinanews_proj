@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from kombu import Queue
 from datetime import timedelta
 
@@ -30,7 +29,7 @@ CELERY_QUEUE = (
     # 路由键以“task.”开头的消息都进default队列
     Queue('default', routing_key='task.#'),
     # 路由键以“crawl.”开头的消息都进 crawl_tasks 队列
-    Queue('crawl_tasks', routing_key='crawl.#')
+    Queue('crawl_tasks', routing_key='crawl.#'),
 )
 
 # 默认的交换机名字为tasks
@@ -41,22 +40,38 @@ CELERY_DEFAULT_EXCHANGE_TYPE = 'topic'
 CELERY_DEFAULT_ROUTING_KEY = 'task.default'
 
 CELERY_ROUTES = {
-    # tasks.books_crawl 的消息会进入 web_tasks 队列
+    # celery_app.task.sinanews_crawl 的消息会进入 crawl_tasks 队列
     'celery_app.task.sinanews_crawl': {
         'queue': 'crawl_tasks',
         'routing_key': 'crawl.sinanews_crawl',
+    },
+
+    # celery_app.task.image_2_oss 的消息会进入 download_image_tasks 队列
+    'celery_app.task.image_2_oss': {
+        'queue': 'download_image_tasks',
+        'routing_key': 'download.image_2_oss',
     }
 }
 
 # periodic tasks
 CELERYBEAT_SCHEDULE = {
-    'add': {
+    'sinanews_crawl': {
         'task': 'celery_app.task.sinanews_crawl',
-        'schedule': timedelta(seconds=0, minutes=5, hours=0, days=0),
+        'schedule': timedelta(seconds=0, minutes=30, hours=0, days=0),
         'args': (),
         'options': {
             'queue': 'crawl_tasks',
             'routing_key': 'crawl.sinanews_crawl'
+        }
+    },
+
+    'image_2_oss': {
+        'task': 'celery_app.task.image_2_oss',
+        'schedule': timedelta(seconds=0.1),
+        'args': (),
+        'options': {
+            'queue': 'download_image_tasks',
+            'routing_key': 'download.image_2_oss'
         }
     }
 }

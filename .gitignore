@@ -1,8 +1,14 @@
-.idea
 *.log
 .scrapy/
+/.idea/
 
 /sinanews_proj/celery_app/celeryconfig.py
 /sinanews_proj/util/ossUtil.py
 /sinanews_proj/settings.py
-/.idea/
+sinanews_proj/__pycache__/
+sinanews_proj/spiders/__pycache__/
+sinanews_proj/util/__pycache__/
+
+*.bak
+*.dat
+*.dir

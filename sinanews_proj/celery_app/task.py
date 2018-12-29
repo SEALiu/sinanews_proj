@@ -1,21 +1,3 @@
-# import sys
-#
-# sys.path.append('.')
-# sys.path.append('..')
-
-from sinanews_proj.celery_app import app
-from sinanews_proj.spiders.SinaNewsSpider import SinaNewsSpider
-from sinanews_proj.spiders.crawl import crawler_d
-from crochet import setup
-from celery.utils.log import get_task_logger
-from scrapy.conf import settings
-from sinanews_proj.util import OssUtil, RedisUtil
-import json
-
-logger = get_task_logger(__name__)
-setup()
-
-
 # 使用 celery.task 装饰器包装的函数就是任务的主体
 # 使用命令启动worker：
 # celery -A [project] worker -l info
@@ -34,6 +16,26 @@ setup()
 # Beat 进程和 worker 也可以同时启动[windows 不支持]：
 # celery -B -A [project] worker -l info
 # 使用 -B 用 Celery 的 Beat 进程自动生成任务，然后每隔一段时间执行一次 celery_app.task.sinanews_crawl
+
+import sys
+
+sys.path.append('.')
+sys.path.append('..')
+
+from celery_app import app
+from spiders.SinaNewsSpider import SinaNewsSpider
+from spiders.crawl import crawler_p, crawler_r, crawler_d
+from util import OssUtil, RedisUtil
+from crochet import setup
+from celery.utils.log import get_task_logger
+from scrapy.conf import settings
+import json
+
+logger = get_task_logger(__name__)
+setup()
+
+
+# celery worker -A celery_app -Q crawl_tasks -P gevent -l info
 @app.task(bind=True, ignore_result=True)
 def sinanews_crawl(self):
     logger.info(('Executing task id {0.id}, args:{0.args!r}'
@@ -46,6 +48,7 @@ def sinanews_crawl(self):
         raise self.retry(exc=e, countdown=30, max_retries=3)
 
 
+# celery worker -A celery_app -Q download_image_tasks -P gevent -l info
 @app.task(bind=True, ignore_result=True)
 def image_2_oss(self):
     logger.info(('Executing task id {0.id}, args:{0.args!r}'
