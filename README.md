@@ -16,8 +16,8 @@ pip install -r requirements.txt
  <small>Rename this file to celeryconfig.py, then modify `BROKER_URL` and `CELERY_RESULT_BACKEND`.</small>
  2. `/sinanews_proj/sinanews_proj/util/ossUtil.example.py`  
  <small>set your own Aliyun-oss configuration.</small>
- 3. `/sinanews_proj/sinanews_proj/settings.example.py`
-  <small>set your own redis and mysql configuration.</small>
+ 3. `/sinanews_proj/sinanews_proj/settings.example.py`  
+ <small>set your own redis and mysql configuration.</small>
 ---
 **running scrapy crawler manually**
 ```commandline
