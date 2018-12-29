@@ -41,7 +41,7 @@ celery worker -A celery_app -Q download_image_tasks -P gevent -l info
 ```
 
 *custom task scheduling interval:*  
-<small>
+
 ```python
 # celeryconfig.py
 
@@ -59,5 +59,3 @@ CELERYBEAT_SCHEDULE = {
     # ...
 }
 ```
-</small>
-
