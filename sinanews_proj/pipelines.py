@@ -79,6 +79,7 @@ class MysqlTwistedPipeline(object):
         sql = get_i_sql(table='tb_sina_news', column_value=item)
         try:
             cursor.execute(sql)
+            cursor.close()
             return item
         except Exception as err:
             logging.debug('MysqlTwistedPipeline do_insert_news() failed with executing sql:[{}], error-info:{}'
@@ -89,6 +90,7 @@ class MysqlTwistedPipeline(object):
         sql = get_i_sql(table='tb_sina_news_comments', column_value=item)
         try:
             cursor.execute(sql)
+            cursor.close()
             return item
         except Exception as err:
             logging.debug('MysqlTwistedPipeline do_insert_comment() failed with executing sql:[{}], error-info:{}'
@@ -99,6 +101,7 @@ class MysqlTwistedPipeline(object):
         sql = get_i_sql(table='tb_sina_user', column_value=item)
         try:
             cursor.execute(sql)
+            cursor.close()
             return item
         except Exception as err:
             logging.debug('MysqlTwistedPipeline do_insert_user() failed with executing sql:[{}], error-info:{}'
