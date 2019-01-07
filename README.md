@@ -1,11 +1,12 @@
- ### Intro
- sinanews_proj is a scrapy project crawling the news article, comments and user's profile information. And it can be 
- scheduled by celery with RabbitMQ as task queue and redis as backend storage.
+ ### 1. project intro
+ sinanews_proj is a scrapy project crawling the news article, comments and user's profile information from `http://edu.sina.cn`. And it can be 
+ scheduled by celery with RabbitMQ as task queue and redis as backend storage. **This project is an open-source software under GNU GENERAL PUBLIC LICENSE,
+ you can change and republish source code with the same license.**
  
- **NOTICE:** with celery 4.2.1, this project is not support windows.
+ **NOTICE:** with celery 4.2.1, this project is not support Windows OS.
 
 
- ### how to start?
+ ### 2. how to start?
  
 ```
 pip install -r requirements.txt
@@ -60,5 +61,5 @@ CELERYBEAT_SCHEDULE = {
 }
 ```
 
-### you may need ...
- - [github.com/jhao104/proxy_pool: Python爬虫代理IP池](https://github.com/jhao104/proxy_pool)
+### 3. you may need ...
+ - [github.com/jhao104/proxy_pool](https://github.com/jhao104/proxy_pool)
