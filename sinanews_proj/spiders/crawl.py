@@ -4,7 +4,7 @@ from scrapy.utils.log import configure_logging
 from sinanews_proj.spiders.SinaNewsSpider import SinaNewsSpider
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 
 
 def crawler_p():
