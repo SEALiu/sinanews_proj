@@ -50,7 +50,13 @@ CELERY_ROUTES = {
     'celery_app.task.image_2_oss': {
         'queue': 'download_image_tasks',
         'routing_key': 'download.image_2_oss',
-    }
+    },
+
+    # celery_app.task.cleaner 的消息会进入 clean_tasks 队列
+    'celery_app.task.cleaner': {
+        'queue': 'clean_tasks',
+        'routing_key': 'clean.cleaner',
+    },
 }
 
 # periodic tasks
@@ -72,6 +78,16 @@ CELERYBEAT_SCHEDULE = {
         'options': {
             'queue': 'download_image_tasks',
             'routing_key': 'download.image_2_oss'
+        }
+    },
+
+    'cleaner': {
+        'task': 'celery_app.task.cleaner',
+        'schedule': timedelta(seconds=0, minutes=0, hours=0, days=1),
+        'args': (),
+        'options': {
+            'queue': 'clean_tasks',
+            'routing_key': 'clean.cleaner'
         }
     }
 }

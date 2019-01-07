@@ -24,12 +24,15 @@ sys.path.append('..')
 
 from celery_app import app
 from spiders.SinaNewsSpider import SinaNewsSpider
-from spiders.crawl import crawler_p, crawler_r, crawler_d
+from spiders.crawl import crawler_p, crawler_r, crawler_d, crawler_
 from util import OssUtil, RedisUtil
 from crochet import setup
 from celery.utils.log import get_task_logger
 from scrapy.conf import settings
 import json
+
+import os
+import time, datetime
 
 logger = get_task_logger(__name__)
 setup()
@@ -43,7 +46,7 @@ def sinanews_crawl(self):
     try:
         conn = RedisUtil.connect()
         RedisUtil.set_add(conn, SinaNewsSpider.redis_key, 'https://edu.sina.cn/')
-        crawler_d()
+        crawler_()
     except Exception as e:
         raise self.retry(exc=e, countdown=30, max_retries=3)
 
@@ -64,3 +67,33 @@ def image_2_oss(self):
             oss_util.download_img_up2oss(url=obj['src'], f_name=obj['oss'] + obj['hash'])
     except Exception as e:
         raise self.retry(exc=e, countdown=5, max_retries=3)
+
+
+@app.task
+def cleaner(self):
+    logger.info(('Executing task id {0.id}, args:{0.args!r}'
+                 'kwargs: {0.kwargs!r}').format(self.request))
+
+    file_path = '../img_temp/'
+    trash_list = []
+
+    for path in os.listdir(file_path):
+        name = path
+        path = os.path.join(file_path, path)
+
+        if not os.path.isdir(path):
+
+            c_timestamp = os.path.getctime(file_path)
+            now_timestamp = time.time()
+            delta_seconds = (datetime.datetime.fromtimestamp(now_timestamp) - datetime.datetime.fromtimestamp(
+                c_timestamp)).seconds
+            print('file:[{}] delta seconds:{}'.format(name, delta_seconds))
+
+            if delta_seconds > 60 * 60 * 2:
+                trash_list.append(path)
+                print('mark file [{}]:[created at {}] as trash.'.format(name, timestamp_2_time(c_timestamp)))
+
+    for trash in trash_list:
+        os.remove(trash)
+
+    print('cleaning work is done!')

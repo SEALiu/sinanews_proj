@@ -30,8 +30,6 @@ def crawler_r():
     # the script will block here until all crawling jobs are finished
 
 
-# this method can fix 'ReactorNotRestartable' problem
-# use this!!!!
 def crawler_d():
     configure_logging({'LOG_FORMAT': '%(levelname)s: %(message)s'})
     runner = CrawlerRunner(get_project_settings())
@@ -44,3 +42,24 @@ def crawler_d():
     crawl()
     reactor.run()
     # the script will block here until the last crawl call is finished
+
+
+# this method might fix 'ReactorNotRestartable' problem
+# try this...
+def crawler_():
+    def f(q):
+        runner = CrawlerRunner()
+        deferred = runner.crawl(SinaNewsSpider)
+        deferred.addBoth(lambda _: reactor.stop())
+        reactor.run()
+        q.put(None)
+        pass
+
+    q = Queue()
+    p = Process(target=f, args=(q,))
+    p.start()
+    result = q.get()
+    p.join()
+
+    if result is not None:
+        raise result
