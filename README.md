@@ -3,7 +3,7 @@
  scheduled by celery with RabbitMQ as task queue and redis as backend storage. **This project is an open-source software under GNU GENERAL PUBLIC LICENSE,
  you can change and republish source code with the same license.**
  
- **NOTICE:** with celery 4.2.1, this project is not support Windows OS.
+ **NOTICE:** with celery 4.1.1(>4.0), this project is not support Windows OS.
 
 
  ### 2. how to start?
@@ -66,3 +66,5 @@ CELERYBEAT_SCHEDULE = {
 
 ### 3. you may need ...
  - [github.com/jhao104/proxy_pool](https://github.com/jhao104/proxy_pool)
+ - install RabbitMQ
+ - [optional] `pip install flower`

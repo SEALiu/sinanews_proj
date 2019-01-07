@@ -15,7 +15,8 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_RESULT_EXPIRES = 60 * 60 * 24
 CELERY_ACCEPT_CONTENT = ['json', 'msgpack']
 
-CELERY_TIMEZONE = 'Asia/Shanghai'
+# because of the bug in celery4.1, it cannot set timezone except UTC.
+# CELERY_TIMEZONE = 'Asia/Shanghai'
 CELERY_ENABLE_UTC = True
 
 CELERYD_LOG_FILE = worker_log_path
