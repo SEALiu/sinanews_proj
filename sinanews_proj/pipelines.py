@@ -74,34 +74,31 @@ class MysqlTwistedPipeline(object):
         logging.debug('spider[{}] save item failed, with error-info: {}\n{}'
                       .format(spider, failure.value, ''.join(traceback.format_tb(failure.tb))))
 
-    @staticmethod
-    def do_insert_news(cursor, item):
+    def do_insert_news(self, cursor, item):
         sql = get_i_sql(table='tb_sina_news', column_value=item)
         try:
             cursor.execute(sql)
-            cursor.close()
+            self.dbpool.disconnect()
             return item
         except Exception as err:
             logging.debug('MysqlTwistedPipeline do_insert_news() failed with executing sql:[{}], error-info:{}'
                           .format(sql, err))
 
-    @staticmethod
-    def do_insert_comment(cursor, item):
+    def do_insert_comment(self, cursor, item):
         sql = get_i_sql(table='tb_sina_news_comments', column_value=item)
         try:
             cursor.execute(sql)
-            cursor.close()
+            self.dbpool.disconnect()
             return item
         except Exception as err:
             logging.debug('MysqlTwistedPipeline do_insert_comment() failed with executing sql:[{}], error-info:{}'
                           .format(sql, err))
 
-    @staticmethod
-    def do_insert_user(cursor, item):
+    def do_insert_user(self, cursor, item):
         sql = get_i_sql(table='tb_sina_user', column_value=item)
         try:
             cursor.execute(sql)
-            cursor.close()
+            self.dbpool.disconnect()
             return item
         except Exception as err:
             logging.debug('MysqlTwistedPipeline do_insert_user() failed with executing sql:[{}], error-info:{}'
