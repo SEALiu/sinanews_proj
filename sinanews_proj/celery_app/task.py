@@ -91,7 +91,11 @@ def cleaner(self):
 
             if delta_seconds > 60 * 60 * 2:
                 trash_list.append(path)
-                print('mark file [{}]:[created at {}] as trash.'.format(name, timestamp_2_time(c_timestamp)))
+                print('mark file [{}]:[created at {}] as trash.'.format(
+                    name, time.strftime(
+                        '%Y-%m-%d %H:%M:%S', time.localtime(c_timestamp)
+                    )
+                ))
 
     for trash in trash_list:
         os.remove(trash)
