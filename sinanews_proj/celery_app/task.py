@@ -46,7 +46,7 @@ def sinanews_crawl(self):
     try:
         conn = RedisUtil.connect()
         RedisUtil.set_add(conn, SinaNewsSpider.redis_key, 'https://edu.sina.cn/')
-        crawler_()
+        crawler_d()
     except Exception as e:
         raise self.retry(exc=e, countdown=30, max_retries=3)
 
@@ -69,7 +69,7 @@ def image_2_oss(self):
         raise self.retry(exc=e, countdown=5, max_retries=3)
 
 
-@app.task
+@app.task(bind=True)
 def cleaner(self):
     logger.info(('Executing task id {0.id}, args:{0.args!r}'
                  'kwargs: {0.kwargs!r}').format(self.request))
