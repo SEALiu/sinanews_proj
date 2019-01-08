@@ -5,6 +5,8 @@ from sinanews_proj.spiders.SinaNewsSpider import SinaNewsSpider
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from multiprocessing import Process, Queue
+from threading import Thread
+
 import billiard
 
 
@@ -45,27 +47,15 @@ def crawler_d():
     # the script will block here until the last crawl call is finished
 
 
-def crawler_():
-    def f(q):
-        runner = CrawlerRunner()
-        deferred = runner.crawl(SinaNewsSpider)
-        deferred.addBoth(lambda _: reactor.stop())
-        reactor.run()
-        q.put(None)
-        pass
-
-    q = Queue()
-    p = Process(target=f, args=(q,))
-    p.start()
-    result = q.get()
-    p.join()
-
-    if result is not None:
-        raise result
-
-
 # this method might fix 'ReactorNotRestartable' problem
 # try this...
+def crawler_():
+    process = CrawlerProcess(get_project_settings())
+    process.crawl(SinaNewsSpider)
+    Thread(target=process.start).start()
+    pass
+
+
 class CrawlerBil(billiard.Process):
     def __init__(self, spider):
         billiard.Process.__init__(self)

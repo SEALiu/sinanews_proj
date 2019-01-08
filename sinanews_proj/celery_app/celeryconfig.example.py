@@ -40,6 +40,8 @@ CELERY_DEFAULT_EXCHANGE_TYPE = 'topic'
 # 默认的路由键是task.default，这个路由键符合上面的default队列
 CELERY_DEFAULT_ROUTING_KEY = 'task.default'
 
+CELERYD_CONCURRENCY = 10
+
 CELERY_ROUTES = {
     # celery_app.task.sinanews_crawl 的消息会进入 crawl_tasks 队列
     'celery_app.task.sinanews_crawl': {
@@ -64,7 +66,7 @@ CELERY_ROUTES = {
 CELERYBEAT_SCHEDULE = {
     'sinanews_crawl': {
         'task': 'celery_app.task.sinanews_crawl',
-        'schedule': timedelta(seconds=0, minutes=30, hours=0, days=0),
+        'schedule': timedelta(seconds=0, minutes=5, hours=0, days=0),
         'args': (),
         'options': {
             'queue': 'crawl_tasks',
@@ -84,7 +86,7 @@ CELERYBEAT_SCHEDULE = {
 
     'cleaner': {
         'task': 'celery_app.task.cleaner',
-        'schedule': timedelta(seconds=0, minutes=0, hours=0, days=1),
+        'schedule': timedelta(seconds=0, minutes=2, hours=0, days=0),
         'args': (),
         'options': {
             'queue': 'clean_tasks',

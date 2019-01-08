@@ -25,7 +25,6 @@ sys.path.append('..')
 from celery_app import app
 from spiders.SinaNewsSpider import SinaNewsSpider
 from spiders.crawl import crawler_p, crawler_r, crawler_d, crawler_
-from spiders.crawl import CrawlerBil
 from util import OssUtil, RedisUtil
 from crochet import setup
 from celery.utils.log import get_task_logger
@@ -47,9 +46,7 @@ def sinanews_crawl(self):
     try:
         conn = RedisUtil.connect()
         RedisUtil.set_add(conn, SinaNewsSpider.redis_key, 'https://edu.sina.cn/')
-        # crawler_d()
-        crawler = CrawlerBil(SinaNewsSpider)
-        crawler.start()
+        crawler_()
     except Exception as e:
         raise self.retry(exc=e, countdown=30, max_retries=3)
 
