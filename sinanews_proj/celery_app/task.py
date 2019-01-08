@@ -25,6 +25,7 @@ sys.path.append('..')
 from celery_app import app
 from spiders.SinaNewsSpider import SinaNewsSpider
 from spiders.crawl import crawler_p, crawler_r, crawler_d, crawler_
+from spiders.crawl import CrawlerBil
 from util import OssUtil, RedisUtil
 from crochet import setup
 from celery.utils.log import get_task_logger
@@ -38,7 +39,7 @@ logger = get_task_logger(__name__)
 setup()
 
 
-# celery worker -A celery_app -Q crawl_tasks -P gevent -l info
+# celery worker -A celery_app -Q crawl_tasks -P gevent -l info -n worker@crawler
 @app.task(bind=True, ignore_result=True)
 def sinanews_crawl(self):
     logger.info(('Executing task id {0.id}, args:{0.args!r}'
@@ -46,12 +47,14 @@ def sinanews_crawl(self):
     try:
         conn = RedisUtil.connect()
         RedisUtil.set_add(conn, SinaNewsSpider.redis_key, 'https://edu.sina.cn/')
-        crawler_d()
+        # crawler_d()
+        crawler = CrawlerBil(SinaNewsSpider)
+        crawler.start()
     except Exception as e:
         raise self.retry(exc=e, countdown=30, max_retries=3)
 
 
-# celery worker -A celery_app -Q download_image_tasks -P gevent -l info
+# celery worker -A celery_app -Q download_image_tasks -P gevent -l info -n worker@downloader
 @app.task(bind=True, ignore_result=True)
 def image_2_oss(self):
     logger.info(('Executing task id {0.id}, args:{0.args!r}'
@@ -69,6 +72,7 @@ def image_2_oss(self):
         raise self.retry(exc=e, countdown=5, max_retries=3)
 
 
+# celery worker -A celery_app -Q clean_tasks -P gevent -l info -n worker@cleaner
 @app.task(bind=True)
 def cleaner(self):
     logger.info(('Executing task id {0.id}, args:{0.args!r}'

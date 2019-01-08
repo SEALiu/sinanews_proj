@@ -35,13 +35,15 @@ cd /sinanews_proj/sinanews_proj/
 celery beat -A celery_app
 
 # crawl news, comments, users-info from 'http://edu.sina.cn/'"
-celery worker -A celery_app -Q crawl_tasks -P gevent -l info
+celery worker -A celery_app -Q crawl_tasks -P gevent -l info -n worker@crawler
 
 # download images and upload to aliyun oss
-celery worker -A celery_app -Q download_image_tasks -P gevent -l info
+celery worker -A celery_app -Q download_image_tasks -P gevent -l info -n worker@downloader
 
 # clean up the folder 'img_temp'
-celery worker -A celery_app -Q clean_tasks -P gevent -l info
+celery worker -A celery_app -Q clean_tasks -P gevent -l info -n worker@cleaner
+
+# use `--`
 ```
 
 **custom task scheduling interval:**  
