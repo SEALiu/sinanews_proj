@@ -46,7 +46,7 @@ def sinanews_crawl(self):
     try:
         conn = RedisUtil.connect()
         RedisUtil.set_add(conn, SinaNewsSpider.redis_key, 'https://edu.sina.cn/')
-        crawler_()
+        # crawler_()
     except Exception as e:
         raise self.retry(exc=e, countdown=30, max_retries=3)
 

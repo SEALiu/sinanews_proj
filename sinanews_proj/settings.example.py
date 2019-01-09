@@ -35,7 +35,7 @@ ROBOTSTXT_OBEY = False
 COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
-TELNETCONSOLE_ENABLED = False
+# TELNETCONSOLE_ENABLED = False
 
 # Override the default request headers:
 # DEFAULT_REQUEST_HEADERS = {
@@ -61,7 +61,8 @@ DOWNLOADER_MIDDLEWARES = {
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html
 EXTENSIONS = {
-    'scrapy.extensions.telnet.TelnetConsole': None,
+    # 'scrapy.extensions.telnet.TelnetConsole': None,
+    'sinanews_proj.extensions.RedisSpiderSmartIdleClosedExtensions': 500,
 }
 
 # Configure item pipelines
@@ -97,6 +98,9 @@ HTTPCACHE_POLICY = 'scrapy.contrib.httpcache.RFC2616Policy'
 #         CUSTOM setting items          #
 #########################################
 REDIRECT_ENABLED = True
+
+MYEXT_ENABLED = True
+IDLE_NUMBER = 10  # 配置空闲持续时间单位为10个 ，一个时间单位为5s
 
 #########################################
 #             LOG setting               #
